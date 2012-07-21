@@ -8,26 +8,6 @@ require './lib/monsters'
 
 puts "Ready!"
 
-character_classes = {
-  "Barbarian" => {
-    "Strength"     => 20,
-    "Dexterity"    => 15,
-    "Intelligence" => 10,
-    "Health"       => 200
-  },
-  "Rogue" => {
-    "Strength"     => 15,
-    "Dexterity"    => 20,
-    "Intelligence" => 15,
-    "Health"       => 150
-  },
-  "Wizard" => {
-    "Strength"     => 10,
-    "Dexterity"    => 10,
-    "Intelligence" => 30,
-    "Health"       => 100
-  }
-}
 
 line_length = 50
 
@@ -44,11 +24,11 @@ puts
 
 character_index = 1
 
-for character_class, attributes in character_classes
+for character_class, attributes in Character.classes
   puts "#{character_index}) #{character_class}"
   character_index += 1
   for attribute_name, attribute_points in attributes
-    puts "#{attribute_name.rjust(14)}: #{attribute_points}"
+    puts "#{attribute_name.rjust(5)}: #{attribute_points}"
   end
   puts 
 end
