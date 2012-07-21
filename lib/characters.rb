@@ -21,4 +21,4 @@ module Character
       }
     }
   end
-end 
+end
