@@ -9,4 +9,8 @@ module Items
       "Alright Greatsword" => { "STR" => 7 }
     }
   end
+
+  # def self.potions
+    
+  # end
 end

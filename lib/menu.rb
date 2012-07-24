@@ -1,41 +1,82 @@
 module Menu
-  @line_length = 50
+  @line_length = 60
   @divider_cleaner = "-" * @line_length
+  @divider_border = "##{@divider_cleaner}#"
 
-  def self.welcome
-    puts <<-WELCOME
+  def self.select_from choices, display_options={}
+    display_options = { divider: true }.merge display_options
 
-    Welcome to Miniablo! Your demise awaits...
+    header = display_options[:header] || "You've got some options..."
+    divider = @divider_cleaner if display_options[:divider]
+    options = choices.zip(1..choices.length).map do |option|
+      choice_number = option[1]
+      choice_label  = option[0]
+      "#{choice_number}) #{choice_label}"
+    end
+    prompt = display_options[:prompt] || "Make your choice"
+    prompt += " > "
+    invalid = display_options[:invalid] || "That is not a valid option."
 
-    WELCOME
+    menu = <<-MENU
+#{header}
+#{divider}
+#{options.join "\n"}
+
+MENU
+
+    selection = nil
+    adjusted_choices = [nil] + choices
+
+    until selection
+      puts menu
+      print prompt
+
+      selection_index = gets.chomp.to_i
+      puts
+
+      unless selection = adjusted_choices[selection_index]
+        puts invalid
+        puts
+      end
+    end
+
+    selection
   end
 
-  def self.character_select(character_classes)
-    puts @divider_cleaner
+  def self.block_display body, options={}
+    display_options = { }.merge options
+    body_lines = to_hyphenated_lines(body)
+
     puts
+    puts "  #{display_options[:title]}" if display_options[:title]
+    puts @divider_border
+    body_lines.each { |line| puts "|#{line.chomp.center(@line_length)}|" }
+    puts @divider_border
+    puts
+  end
 
-    character_index = 1
+protected
+  def self.to_hyphenated_lines to_wrap
+    lines_to_wrap = to_wrap.lines
+    return lines_to_wrap unless lines_to_wrap.any? {|line| line.length > @line_length }
 
-    for character_class, attributes in character_classes
-      puts "#{character_index}) #{character_class}"
-      character_index += 1
-      for attribute_name, attribute_points in attributes
-        puts "#{attribute_name.rjust(5)}: #{attribute_points}"
+    lines = []
+    lines_to_wrap.each do |line|
+      remainder = line
+      until remainder.length < @line_length
+        next_line = remainder[0..@line_length-4]
+        remainder = remainder[@line_length-3..-1]
+
+        # hyphenate broken words
+        if next_line[-1] != ' ' and remainder[0] != ' '
+          next_line += '-'
+        end
+
+        lines << next_line
       end
-      puts 
+      lines << remainder
     end
 
-    print "Please choose a character based on their corresponding number: "
-
-    character_choice = gets.chomp.to_i
-
-    if [1, 2, 3].include? character_choice
-      puts
-      puts "You have chosen #{character_choice}."
-    else
-      puts
-      puts "Sorry that is an incorrect response. Please choose a character based on their
-      respective number."
-    end
+    lines
   end
 end
